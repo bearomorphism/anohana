@@ -1,0 +1,77 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=2.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{biblatex}
+\usepackage{mathtools}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+
+\newcommand{\defeq}{\stackrel{\text{def}}{=}}
+\newcommand{\norm}[1]{\lVert #1 \rVert_2}
+\newcommand{\re}[2]{\text{RE}(#1 \Vert #2)}
+\newcommand{\inner}[2]{\langle #1, #2 \rangle}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\dom}{dom}
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\addbibresource[]{ref.bib}
+
+\title{CSIE5002 Prediction, learning, and games HW1}
+\author{Hsiung, Yu-Ting B07902119}
+
+\begin{document}
+\maketitle
+
+\begin{enumerate}
+    \item (10 points) A standard real-world application scenario where the game appears is weather forecasting (forecasting whether it will rain tomorrow). A more involved application of calibrated forecasting is to explain how correlated equilibria appear in repeated games. Find another real-world application scenario and explain why it can be formulated as the game above. The application scenario can be designing a sub-routine of an algorithm.
+    \par {\color{blue} Predicting the win probability of a basketball team to their next game, and here I assume that the basketball team doesn't know the predictor, so that I can regard the predicting probability and the outcome are announced simultaneously. The basketball team is either winning or not winning, so the outcome can be considered as \textsc{Reality}. The one predicting the winning probability can be considered as \textsc{Learner}.}
+
+    \item (20 points) There are many ways to evaluate the accuracy of \textsc{Learner}'s forecasts. One of them is based on the notion of calibration that, roughly speaking, requires the forecasts and empirical frequencies are close. Give the definition of when a forecasting algorithm is called ``$\epsilon$-calibrated." Explain, in plain words, how it corresponds to the concept that the forecasts and empirical frequencies are close.
+    \par {\color{blue} Let the probability simplex $\mathscr{P}$ of the set of outcomes $\mathscr{A}$ be covered by $N_\epsilon$ $\epsilon$-balls with centers of the balls $\mathbf{p}_1, ..., \mathbf{p}_{N_\epsilon}$. An $\epsilon$-calibrated algorithm generates a sequence $\{P_t\}$, where each $P_t \in \{\mathbf{p}_1, ..., \mathbf{p}_{N_\epsilon}\}$ and the sequence suffices the following
+    \[\limsup_{T \to +\infty} \sum_{k=1}^{N_\epsilon} \left\lVert \frac{1}{T} \sum_{t=1}^T []_{\{K_t=k\}}(\mathbf{p}_k - \delta_{a_t})\right\rVert \leq \epsilon \text{ a.s.}\]
+    where $K_t \in \{1, ..., N_\epsilon\}$ is the index such that $P_t = \mathbf{p}_{K_t}$ and $\lVert \cdot \rVert$ is some norm.
+
+    To explain in plain text, there are only $N_\epsilon$ choices and the probability simplex is covered by $\epsilon$-balls, so the best we can do is to make the empirical frequencies no larger than $\epsilon$. The $\epsilon$ here are corresponding to the original calibration forecaster property:
+    \[\forall \epsilon > 0, \forall p \in \mathscr{P}, \lim_{T \to +\infty} \left\lVert \frac{1}{T} \sum_{t=1}^T []_{\{\lVert P_t - \mathbb{p} \leq \epsilon \rVert\}}(P_t - \delta_{a_t})\right\rVert = 0 \text{ a.s.}\]
+    when we don't restrict the forecaster's choices on some finite subset of $\mathscr{P}$.
+    }
+    \item (20 points) Show that it is necessary for \textsc{Learner} to use a randomized forecasting algorithm.
+    \par {\color{blue} I took Oakes\cite{oakes1985self} as a reference. If \textsc{Learner} is not randomized, we can construct a \textsc{Reality} such that the \textsc{Learner} is useless. Let $\Pi$ be the prior probability distribution. Set the strategy $P$ as following \[P(S_i | B_{i-1}) = f(\Pi (S_i | B_{i-1}))\] where $B_i$ is the forecaster's state of knowledge on round $i$, and $f: [0, 1] \to [0, 1]$ is defined by \[f(x) = \begin{cases}x+\frac{1}{2}, x \in [0, \frac{1}{2}] \\ 1 - x, x \in ]\frac{1}{2}, 1]\end{cases}\]
+    Then for each $a \in [0, 1]$, we choose a random subsequence of rounds $I_1, I_2 ...$ with $Y_{I_i} = a$, and then $Y_{I_1}, Y_{I_2}, ...$ form a Bernoulli sequence with $P(Y_{I_k} = 1) = a$. Then the actual relative frequency with forecast probability $a$ will approach $f(a) \neq a$.
+    TODO}
+
+    \item (20 points) Explain how we can formulate the problem of designing an $\epsilon$-calibrated forecasting algorithm for \textsc{Learner} as an approachability problem.
+    \par {\color{blue} Since the set $\mathscr{P} = [0, 1]$ can be covered by the finite collection of intervals \[\mathscr{C} := \left\{]\mathbf{p}_i - \epsilon, \mathbf{p}_i + \epsilon[ : \mathbf{p}_i = \frac{(2i - 1)\epsilon}{2} \text{ for } i = 1, ..., N_\epsilon = \left\lceil \frac{2 - \epsilon}{2\epsilon}\right\rceil\right\}\]
+    Then $\mathscr{C}$ is the associated $\epsilon$-grid of $\mathscr{P}$ with respect to the $l_1$-norm on $\R^1$. Define the vector-valued payoff function below: it takes values in $\R^{2N_\epsilon}$. For all $k \in \{1, ..., N_\epsilon\}$ and $a \in \{0, 1\}$, \[m(k, a) = (\underline{0}, ..., \underline{0}, \mathbf{p}_k - \delta_a, \underline{0}, ..., \underline{0})\]
+    where $\underline{0} \in \R^2$ is the zero element and the nonzero element above is located at the $k$-th position. The target set $C$ is the following subset of the union of $\epsilon$-balls around $(\underline{0}, ..., \underline{0})$:
+    \[C = \left\{ (\underline{x}_1, ..., \underline{x}_{N_\epsilon}) \in \R^{2N_\epsilon}: \sum_{k=1}^{N_\epsilon} \lVert \underline{x}_k \rVert \leq \epsilon \right\}\]
+    Notice that $C$ is indeed a convex set, so I can apply Blackwell's theorem later.
+    Now this is the 1-dimensional version of $\epsilon$-calibration forecaster.
+    }
+    \item (10 points) Show that the set we want to approach in your formulation above is indeed approachable.
+    \par {\color{blue} By Blackwell's theorem, since the set $C$ is closed and convex, the rest is to show that
+    \[ \forall \mathbf{q} \in [0, 1] = \mathscr{P}, \exists k \in \{1, ..., N_\epsilon\}, m(k, \mathbf{q}) \in C\]
+    By the construction in the previous problem, for each $\mathbf{q} \in \mathscr{P}$, there is $k \in \{1, ..., N_\epsilon\}$ such that $\lVert \mathbf{p}_k - \mathbf{q}\rVert \leq \epsilon$. Therefore, \[m(k, \mathbf{q}) \in C\]
+    Applying Blackwell's, we have shown that $C$ is indeed approachable.
+    }
+
+    \item (20 points) Recall that, to implement Blackwell's algorithm, in each iteration we may solve a bilinear minimax problem of the form
+    \[p^\star \in \argmin_{p \in \Delta_{n-1}} \max_{q \in \Delta_{m-1}} f(p, q)\]
+    where $\Delta_{n-1}$ and $\Delta_{m-1}$ denote the probability simplexes in $\R^n$ and $\R^m$, respectively, and f is a function linear in both $p$ and $q$. Give an algorithm that provably generates an approximation of $p^\star$ in time polynomial in both $n$ and $m$.
+    \par {\color{blue} }
+\end{enumerate}
+
+\printbibliography
+
+\end{document}
