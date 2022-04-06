@@ -49,7 +49,7 @@
     \item (20 points) Show that it is necessary for \textsc{Learner} to use a randomized forecasting algorithm.
     \par {\color{blue} I took Oakes\cite{oakes1985self} as a reference. If \textsc{Learner} is not randomized, we can construct a \textsc{Reality} such that the \textsc{Learner} is useless. Let $\Pi$ be the prior probability distribution. Set the strategy $P$ as following \[P(S_i | B_{i-1}) = f(\Pi (S_i | B_{i-1}))\] where $B_i$ is the forecaster's state of knowledge on round $i$, and $f: [0, 1] \to [0, 1]$ is defined by \[f(x) = \begin{cases}x+\frac{1}{2}, x \in [0, \frac{1}{2}] \\ 1 - x, x \in ]\frac{1}{2}, 1]\end{cases}\]
     Then for each $a \in [0, 1]$, we choose a random subsequence of rounds $I_1, I_2 ...$ with $Y_{I_i} = a$, and then $Y_{I_1}, Y_{I_2}, ...$ form a Bernoulli sequence with $P(Y_{I_k} = 1) = a$. Then the actual relative frequency with forecast probability $a$ will approach $f(a) \neq a$.
-    TODO}
+    }
 
     \item (20 points) Explain how we can formulate the problem of designing an $\epsilon$-calibrated forecasting algorithm for \textsc{Learner} as an approachability problem.
     \par {\color{blue} Since the set $\mathscr{P} = [0, 1]$ can be covered by the finite collection of intervals \[\mathscr{C} := \left\{]\mathbf{p}_i - \epsilon, \mathbf{p}_i + \epsilon[ : \mathbf{p}_i = \frac{(2i - 1)\epsilon}{2} \text{ for } i = 1, ..., N_\epsilon = \left\lceil \frac{2 - \epsilon}{2\epsilon}\right\rceil\right\}\]
