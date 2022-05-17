@@ -1,0 +1,57 @@
+%!TEX program = xelatex
+\documentclass[a4paper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=2.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{biblatex}
+\usepackage{mathtools}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+
+\newcommand{\defeq}{\stackrel{\text{def}}{=}}
+\newcommand{\norm}[1]{\lVert #1 \rVert_2}
+\newcommand{\re}[2]{\text{RE}(#1 \Vert #2)}
+\newcommand{\inner}[2]{\langle #1, #2 \rangle}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\dom}{dom}
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\addbibresource[]{ref.bib}
+
+\title{CSIE5002 Prediction, learning, and games HW2}
+\author{Hsiung, Yu-Ting B07902119}
+
+\begin{document}
+\maketitle
+
+\section*{Problem 1}
+
+In this problem, the answers are mainly referenced from the article \textit{PAC-Bayes Bounds with Data Dependent Priors}\cite{parrado2012pac}.
+
+\begin{enumerate}
+    \item In section 3.1 of the article, they consider learning a prior based on training an SVM on a subset $T$ consisting of $r$ training patterns and labels from the training set. With these $r$ examples we can learn a unit and biased SVM classifier $\mathbf{w}_r$ and form a prior distribution $P(\mathbf{w}_r, \eta) \sim N(\eta \mathbf{w}_r, I)$, which is Gaussian with identity covariance matrix and centered along $\mathbf{w}_r$ at a distance $\eta$ from the origin.
+
+    \item By Corollary 5 (Single-prior PAC-Bayes bound for SVMs) from the article, the classifier $\mathbf{w}_r$ has been learned from a subset $T$ of $r$ examples a priori separated from a training set $S$ of $m$ samples. Then, for all distributions $\mathcal{D}$, for
+          all $\delta \in (0,1]$, we have
+          \[Pr_{S \sim \mathcal{D}^m} \left( \forall \mathbf{w}_m, \mu: KL_+(\hat{Q}_{S\setminus T }|| Q_D) \leq \frac{\frac{||\eta \mathbf{w}_r - \mu \mathbf{w}_m||^2}{2}+\ln(\frac{m-r+1}{\delta})}{m-r}\right) \geq 1 - \delta\]
+          The hypothesis class is consisting of all the SVM classifiers. The loss function is simply 0-1 loss.
+\end{enumerate}
+
+\section*{Problem 2}
+\begin{enumerate}
+    \item
+\end{enumerate}
+
+\printbibliography
+
+\end{document}
