@@ -6,6 +6,8 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{amsfonts}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{biblatex}
 \usepackage{mathtools}
 \usepackage{mathrsfs}
@@ -39,17 +41,48 @@
 In this problem, the answers are mainly referenced from the article \textit{PAC-Bayes Bounds with Data Dependent Priors}\cite{parrado2012pac}.
 
 \begin{enumerate}
-    \item In section 3.1 of the article, they consider learning a prior based on training an SVM on a subset $T$ consisting of $r$ training patterns and labels from the training set. With these $r$ examples we can learn a unit and biased SVM classifier $\mathbf{w}_r$ and form a prior distribution $P(\mathbf{w}_r, \eta) \sim N(\eta \mathbf{w}_r, I)$, which is Gaussian with identity covariance matrix and centered along $\mathbf{w}_r$ at a distance $\eta$ from the origin.
+  \item In section 3.1 of the article, they consider learning a prior based on training an SVM on a subset $T$ consisting of $r$ training patterns and labels from the training set. With these $r$ examples we can learn a unit and biased SVM classifier $\mathbf{w}_r$ and form a prior distribution $P(\mathbf{w}_r, \eta) \sim N(\eta \mathbf{w}_r, I)$, which is Gaussian with identity covariance matrix and centered along $\mathbf{w}_r$ at a distance $\eta$ from the origin.
 
-    \item By Corollary 5 (Single-prior PAC-Bayes bound for SVMs) from the article, the classifier $\mathbf{w}_r$ has been learned from a subset $T$ of $r$ examples a priori separated from a training set $S$ of $m$ samples. Then, for all distributions $\mathcal{D}$, for
-          all $\delta \in (0,1]$, we have
-          \[Pr_{S \sim \mathcal{D}^m} \left( \forall \mathbf{w}_m, \mu: KL_+(\hat{Q}_{S\setminus T }|| Q_D) \leq \frac{\frac{||\eta \mathbf{w}_r - \mu \mathbf{w}_m||^2}{2}+\ln(\frac{m-r+1}{\delta})}{m-r}\right) \geq 1 - \delta\]
-          The hypothesis class is consisting of all the SVM classifiers. The loss function is simply 0-1 loss.
+  \item By Corollary 5 (Single-prior PAC-Bayes bound for SVMs) from the article, the classifier $\mathbf{w}_r$ has been learned from a subset $T$ of $r$ examples a priori separated from a training set $S$ of $m$ samples. Then, for all distributions $\mathcal{D}$, for
+        all $\delta \in (0,1]$, we have
+        \[Pr_{S \sim \mathcal{D}^m} \left( \forall \mathbf{w}_m, \mu: KL_+(\hat{Q}_{S\setminus T }|| Q_D) \leq \frac{\frac{||\eta \mathbf{w}_r - \mu \mathbf{w}_m||^2}{2}+\ln(\frac{m-r+1}{\delta})}{m-r}\right) \geq 1 - \delta\]
+        The hypothesis class is consisting of all the SVM classifiers. The loss function is simply 0-1 loss.
 \end{enumerate}
 
 \section*{Problem 2}
+In this problem, I mainly referenced \textit{A new look at shifting regret}\cite{cesa2012new}, \textit{Tracking the best expert}\cite{herbster1998tracking}.
+
 \begin{enumerate}
-    \item
+  \item While the static regret depends on some fixed strategy $x \in \mathscr{X}$, a more generalized regret compares \textsc{Learner}'s strategy sequence with some other strategy sequence $q_1, q_2, ..., q_T \in \mathscr{X}$. Hence, the new regret definition can be given by
+        \[R_T(q_1^T) := \sum_{t=1}^T f_t(x_t) - \sum_{t=1}^T f_t(q_t), \forall q_1, q_2, ..., q_T \in \mathscr{X}.\]
+        The shifting regret bound is obtained depend on the ``regularity'', denoted $m(q_1^T)$ of the comparison sequence $q_1, q_2, ..., q_T$. The regularity $m(q_1^T)$ is defined by the number of times $q_{t+1} \neq q_t$ in the sequence $q_1^T$. In this case, given some integer $m_0$, the $m_0$-shifting regret is defined by comparing the \textsc{Learner}'s strategy sequence with some strategy sequence $q_1^T$ sufficing $m(q_1^T) \leq m_0$. An algorithm with a shifting regret guarantee is such that its shifting regret will be bounded given some $m_0$.
+  \item \textit{A new look at shifting regret}\cite{cesa2012new} shows the algorithm generalized share has a shifting regret guarantee.
+
+        \begin{algorithm}
+          \caption{The generalized share algorithm}\label{alg:gen}
+          \begin{algorithmic}
+            \Require learning rate $\eta > 0$ and mixing functions $\psi_t = 1, ..., T$
+            \Ensure $x_1 = v_1 = (1/d, ..., 1/d)$
+            \For{ each round $t = 1, ..., T$}
+            \State \textsc{Learner} predict $x_t$
+            \State Observe loss $\ell_t \in [0, 1]^d$
+            \State [loss update] \textbf{For} each $j=1, ..., d$ define \\
+            $\displaystyle v_{j, t+1}=\frac{x_{j, t}e^{-\eta \ell_{j, t}}}{\sum_{i=1}^dx_{i, t}e^{-\eta \ell_{i, t}}}$ the current pre-weights, \\
+            $\displaystyle \underline{V}_{t+1}=[v_{i, s}]_{i\in[d], 1\leq s \leq t+1}$
+            \EndFor
+          \end{algorithmic}
+        \end{algorithm}
+
+        In the following inequality, the function $h(x) = -x \ln x - (1-x)\ln(1-x)$ denotes the binary entropy for $x \in [0, 1]$. Let $m_0 > 0$. For all $T \geq 1$, all sequences of loss vectors $\ell_1, ..., \ell_T \in [0, 1]^d$, and for all $q_1, ..., q_T \in \delta_d$ with $m(q_1^T) \leq m_0$, we have the following inequality:
+        \[\sum_{t=1}^T x_t^\top \ell_t - \sum_{t=1}^T q_t^\top \ell_t \leq \sqrt{\frac{T}{2}\left((m_0 + 1) \ln d + (T-1)h\left(\frac{m_0}{T-1}\right)\right)} \]
+        whenever the learning rate $\eta$ and $\alpha$ are optimally chosen in terms of $m_0$ and $T$.
+  \item Shifting regret
+  \item Adaptive regret
+  \item Adaptive regret
+  \item Adaptive regret
+  \item Dynamic regret
+  \item Dynamic regret
+  \item Dynamic regret
 \end{enumerate}
 
 \printbibliography
