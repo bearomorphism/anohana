@@ -50,39 +50,45 @@ In this problem, the answers are mainly referenced from the article \textit{PAC-
 \end{enumerate}
 
 \section*{Problem 2}
-In this problem, I mainly referenced \textit{A new look at shifting regret}\cite{cesa2012new}, \textit{Tracking the best expert}\cite{herbster1998tracking}.
+In this problem, I shared some articles and discussed with B07303098.
 
 \begin{enumerate}
   \item While the static regret depends on some fixed strategy $x \in \mathscr{X}$, a more generalized regret compares \textsc{Learner}'s strategy sequence with some other strategy sequence $q_1, q_2, ..., q_T \in \mathscr{X}$. Hence, the new regret definition can be given by
         \[R_T(q_1^T) := \sum_{t=1}^T f_t(x_t) - \sum_{t=1}^T f_t(q_t), \forall q_1, q_2, ..., q_T \in \mathscr{X}.\]
-        The shifting regret bound is obtained depend on the ``regularity'', denoted $m(q_1^T)$ of the comparison sequence $q_1, q_2, ..., q_T$. The regularity $m(q_1^T)$ is defined by the number of times $q_{t+1} \neq q_t$ in the sequence $q_1^T$. In this case, given some integer $m_0$, the $m_0$-shifting regret is defined by comparing the \textsc{Learner}'s strategy sequence with some strategy sequence $q_1^T$ sufficing $m(q_1^T) \leq m_0$. An algorithm with a shifting regret guarantee is such that its shifting regret will be bounded given some $m_0$.
-  \item \textit{A new look at shifting regret}\cite{cesa2012new} shows the algorithm generalized share has a shifting regret guarantee.
+        The shifting regret bound is obtained depend on the ``regularity'', denoted $m(q_1^T)$ of the comparison sequence $q_1, q_2, ..., q_T$. The regularity $m(q_1^T)$ is defined by the number of times $q_{t+1} \neq q_t$ in the sequence $q_1^T$. In this case, given some integer $m_0$, the $m_0$-shifting regret is defined by comparing the \textsc{Learner}'s strategy sequence with some strategy sequence $q_1^T$ sufficing $m(q_1^T) \leq m_0$. Formally, the shifting regret of an algorithm $\mathcal{A}$ is
+        \[\textit{Shifting-Regret}_T(\mathcal{A}) := \sum_{t=1}^T f_t(x_t) - \min_{q_1^T \text{ s.t. } m(q_1^T) \leq m_0}\sum_{t=1}^T f_t(q_t).\]
+        An algorithm with a shifting regret guarantee is such that its shifting regret will be bounded given some $m_0$.
+  \item \textit{A new look at shifting regret}\cite{cesa2012new} shows the algorithm generalized share has a shifting regret guarantee. The form of the algorithm is Algorithm 1 in the article. Corollary 3 shows the following:
 
-        \begin{algorithm}
-          \caption{The generalized share algorithm}\label{alg:gen}
-          \begin{algorithmic}
-            \Require learning rate $\eta > 0$ and mixing functions $\psi_t = 1, ..., T$
-            \Ensure $x_1 = v_1 = (1/d, ..., 1/d)$
-            \For{ each round $t = 1, ..., T$}
-            \State \textsc{Learner} predict $x_t$
-            \State Observe loss $\ell_t \in [0, 1]^d$
-            \State [loss update] \textbf{For} each $j=1, ..., d$ define \\
-            $\displaystyle v_{j, t+1}=\frac{x_{j, t}e^{-\eta \ell_{j, t}}}{\sum_{i=1}^dx_{i, t}e^{-\eta \ell_{i, t}}}$ the current pre-weights, \\
-            $\displaystyle \underline{V}_{t+1}=[v_{i, s}]_{i\in[d], 1\leq s \leq t+1}$
-            \EndFor
-          \end{algorithmic}
-        \end{algorithm}
-
-        In the following inequality, the function $h(x) = -x \ln x - (1-x)\ln(1-x)$ denotes the binary entropy for $x \in [0, 1]$. Let $m_0 > 0$. For all $T \geq 1$, all sequences of loss vectors $\ell_1, ..., \ell_T \in [0, 1]^d$, and for all $q_1, ..., q_T \in \delta_d$ with $m(q_1^T) \leq m_0$, we have the following inequality:
+        In the following inequality, the function $h(x) = -x \ln x - (1-x)\ln(1-x)$ denotes the binary entropy for $x \in [0, 1]$. Let $m_0 > 0$. For all $T \geq 1$, all sequences of loss vectors $\ell_1, ..., \ell_T \in [0, 1]^d$, and for all $q_1, ..., q_T \in \Delta_d$ with $m(q_1^T) \leq m_0$, we have the following inequality:
         \[\sum_{t=1}^T x_t^\top \ell_t - \sum_{t=1}^T q_t^\top \ell_t \leq \sqrt{\frac{T}{2}\left((m_0 + 1) \ln d + (T-1)h\left(\frac{m_0}{T-1}\right)\right)} \]
         whenever the learning rate $\eta$ and $\alpha$ are optimally chosen in terms of $m_0$ and $T$.
-  \item Shifting regret
-  \item Adaptive regret
-  \item Adaptive regret
-  \item Adaptive regret
-  \item Dynamic regret
-  \item Dynamic regret
-  \item Dynamic regret
+
+        The assumption on $\mathscr{X}$ is that \textsc{Learner} optimizes their strategy on the probability simplex. The assumption on $f_t$ is that $f_t = (\cdot)^\top \ell_t$, which is linear.
+  \item We can apply this on stock trading.
+  \item Adaptive regret of an online convex optimization algorithm $\mathcal{A} $ is defined as the maximum regret it achieves over any contiguous time interval. It can be formally written as
+        \[\textit{Adaptive-Regret}_T(\mathcal{A}) := \sup_{I=[r, s] \subseteq [t]} \left\{\sum_{t=r}^s f_t(x_t) - \min_{x_I^*\in K}\sum_{t=r}^s f_t(x_I^*)\right\}\]
+        It ensures static regret in any interval. Ideally, we want the adaptive regret to be strongly sublinear.
+  \item I found a basic algorithm called \textit{Following-the-Leading-History} (FLH) from \textit{Efficient learning algorithms for changing environments}\cite{hazan2009efficient}. Theorem 3.1 says:
+        \begin{theorem}
+          If all loss functions are $\alpha$-exp concave then the FLH algorithm attains adaptive regret of $O(\alpha^{-1}\log^2 T)$. The running time per iteration is $O(n^3\log T)$.
+        \end{theorem}
+  \item We can apply this on stock trading.
+  \item The following mainly referenced Zhang, Lijun and Yang, Tianbao and rong jin and Zhou, Zhi-Hua\cite{pmlr-v80-zhang18o}. Dynamic regret of an online convex optimization algorithm $\mathcal{A} $ is the difference between the cumulative loss of the learner and a strategy sequence
+        \[R_T(q_1^T) := \sum_{t=1}^T f_t(x_t) - \sum_{t=1}^T f_t(q_t), \forall q_1, q_2, ..., q_T \in \mathscr{X}.\]
+        \[\textit{Dynamic-Regret}_T(\mathcal{A}):= \sum_{t=1}^T f_t(x_t) - \min_{q_1^T}\sum_{t=1}^T f_t(q_t)\]
+        In the worst case, a sublinear dynamic
+        regret is impossible unless we impose some regularities on
+        the comparator sequence or the function sequence. Some examples of regularities are
+        \begin{itemize}
+          \item Functional variation
+                \[V_T=\sum_{t=2}^T\max_{x\in\mathscr{X}}|f_t(x)-f_{t-1}(x)|\]
+          \item Path length
+                \[\mathcal{P}(q_1^T) = \sum_{t=2}^T\parallel q_t-q_{t-1}\parallel_2\]
+        \end{itemize}
+  \item Zhang, Lijun and Yang, Tianbao and rong jin and Zhou, Zhi-Hua\cite{pmlr-v80-zhang18o} proposed the Improved Following the Leading History (IFLH) algorithm. By Corollary 7 of the article, its dynamic regret satisfies
+        \[R_T(q_1^T) = O(\max\{\log T, \sqrt{T V_T \log T}\})\]
+  \item We can apply this on stock trading.
 \end{enumerate}
 
 \printbibliography
